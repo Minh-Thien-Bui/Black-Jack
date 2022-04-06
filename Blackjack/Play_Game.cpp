@@ -9,6 +9,7 @@ int main()
 
 	cout << "Welcome to Blackjack\n";
 
+	//cardgame.AceTest();
 	//cardgame.ExodiaTest();
 	//cardgame.TestPairs();
 

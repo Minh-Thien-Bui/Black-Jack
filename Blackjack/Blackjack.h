@@ -49,6 +49,7 @@ public:
 	void GameStart();
 
 	// Test Functions
+	void AceTest();
 	void ExodiaTest();
 	void TestPairs();
 	
@@ -84,6 +85,13 @@ private:
 
 	float SimulateGames(vector<shared_ptr<card>> unknown_cards, shared_ptr<user> player);
 	float SimulateGames(vector<shared_ptr<card>> unknown_cards, int player_total);
+
+	const string suits_list[4] = {
+		"Clubs",
+		"Diamonds",
+		"Hearts",
+		"Spades"
+	};
 
 	vector<shared_ptr<card>> card_list;
 	queue<shared_ptr<card>> deck;

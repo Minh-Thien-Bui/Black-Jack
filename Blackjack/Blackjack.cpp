@@ -17,13 +17,6 @@ Blackjack::Blackjack() {
     card_dict["Queen"] = 10;
     card_dict["King"] = 10;
 
-    string suits_list[4] = {
-        "Clubs",
-        "Diamonds",
-        "Hearts",
-        "Spades"
-    };
-
     for (auto rank_value : card_dict)
     {
         for (string suit : suits_list)
@@ -115,6 +108,8 @@ void Blackjack::InitGame() {
     }
 
     table.push_back(player);
+    ShowTable();
+
     CheckDoubles(player);
     int high_score = 0;
 
@@ -129,6 +124,7 @@ void Blackjack::InitGame() {
     }
     
     DealersChoice(high_score);
+    ShowTable();
     
     for (shared_ptr<user> it : table)
     {
@@ -160,8 +156,6 @@ void Blackjack::ShowHand(shared_ptr<user> player) {
 }
 
 void Blackjack::CheckDoubles(shared_ptr<user> player) {
-    ShowTable();
-
     if (player->hand[0]->rank == player->hand[1]->rank)
     {
         SplitPair(player);
@@ -195,8 +189,14 @@ void Blackjack::SplitPair(shared_ptr<user> player) {
 
         table.push_back(temp_user);
 
+        ShowTable();
         CheckDoubles(player);
         CheckDoubles(temp_user);
+    }
+
+    else
+    {
+        ShowTable();
     }
 }
 
@@ -330,7 +330,6 @@ void Blackjack::Hit(shared_ptr<user> player) {
 }
 
 void Blackjack::EndGame(shared_ptr<user> player) {
-    ShowTable();
     ShowHand(player);
 
     cout << "\nDealer's hand contains:\n";
@@ -565,6 +564,43 @@ float Blackjack::SimulateGames(vector<shared_ptr<card>> unknown_cards, int playe
     }
 }
 
+void Blackjack::AceTest() {
+    table.clear();
+    dealer = InitCasino();
+    vector<shared_ptr<card>> aceHand;
+
+    aceHand.push_back(
+        InitCard("Six", "test", 6)
+    );
+    aceHand.push_back(
+        InitCard("Ace", "test", 1)
+    );
+
+    while (!deck.empty())
+    {
+        deck.pop();
+    }
+
+    deck.push(InitCard("Two", "test", 2));
+    deck.push(InitCard("Nine", "test", 9));
+    deck.push(InitCard("Ace", "test", 1));
+
+    shared_ptr<user> acePlayer = InitUser(aceHand);
+    dealer->hand = aceHand;
+
+    acePlayer->hand.push_back(
+        InitCard("Ace", "test", 1)
+    );
+
+    CalculateHand(acePlayer);
+    DealersChoice(acePlayer->score);
+    EndGame(acePlayer);
+
+    dealer->hand.pop_back();
+    DealersChoice(acePlayer->score);
+    EndGame(acePlayer);
+}
+
 void Blackjack::ExodiaTest() {
     table.clear();
     dealer = InitCasino();
@@ -614,15 +650,7 @@ void Blackjack::TestPairs() {
     {
         deck.pop();
     }
-
-    string suits_list[4] = 
-    {
-        "Clubs",
-        "Diamonds",
-        "Hearts",
-        "Spades"
-    };
-
+    
     for (string suit : suits_list)
     {
         deck.push(InitCard("Ace", suit, 1));
@@ -640,6 +668,6 @@ void Blackjack::TestPairs() {
     }
 
     table.push_back(temp_user);
-    CheckDoubles(temp_user);
     ShowTable();
+    CheckDoubles(temp_user);
 }
