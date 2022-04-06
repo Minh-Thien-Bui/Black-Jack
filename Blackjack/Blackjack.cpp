@@ -110,13 +110,18 @@ void Blackjack::InitGame() {
     {
         StayOrBust(it);
 
-        if (it->score > high_score)
+        if (it->score > high_score && it->score < 22)
         {
             high_score = it->score;
         }
     }
     
     DealersChoice(high_score);
+    
+    for (shared_ptr<user> it : table)
+    {
+        EndGame(it);
+    }
 }
 
 void Blackjack::Check_Doubles() {
@@ -314,89 +319,104 @@ void Blackjack::Hit(shared_ptr<user>& player) {
     StayOrBust(player);
 }
 
-void Blackjack::DealersChoice(int player_sum) {
-    if (player_sum > 21)
+void Blackjack::EndGame(shared_ptr<user> player) {
+    cout << "\nYour hand holds:\n";
+
+    for (shared_ptr<card> it : player->hand)
     {
-        DealerShows();
-        cout << "\nYou Lose\n";
-        return;
+        cout << it->title << '\n';
     }
 
-    CalculateHand(dealer);
-    shared_ptr<user> player = table[0];
-
-    if (player->exodia && dealer->exodia)
-    {
-        DealerShows();
-        cout << "\nYou and the Dealer both got Blackjack\nIt's a Push\n";
-        return;
-    }
-
-    else if (player->exodia && !dealer->exodia)
-    {
-        DealerShows();
-        cout << "\nYour Blackjack Beats Dealer's Hand\nYou Win\n";
-        return;
-    }
-
-    else if (!player->exodia && dealer->exodia)
-    {
-        DealerShows();
-        cout << "\nDealer's Blackjack Beats Your Hand\nThe House Wins\n";
-        return;
-    }
-    
-    if (dealer->score > 21)
-    {
-        DealerShows();
-
-        cout << "\nDealer's Total: " << dealer->score
-            << "\nDealer Busts"
-            << "\nYou Win\n";
-    }
-    
-    else if (dealer->score > player_sum)
-    {
-        DealerShows();
-
-        cout << "\nDealer's Score: " << dealer->score
-            << " Beats Player's Score: " << player_sum
-            << "\nThe House Wins\n";
-    }
-
-    else if (dealer->score == player_sum)
-    {
-        DealerShows();
-
-        cout << "\nDealer's Score: " << dealer->score
-            << " Ties Player's Score: " << player_sum
-            << "\nIt's a Push\n";
-    }
-
-    else if(dealer->score < 17 || dealer->soft17)
-    {
-        dealer->hand.push_back(deck.front());
-        deck.pop();
-        DealersChoice(player_sum);
-    }
-
-    else
-    {
-        DealerShows();
-
-        cout << "\nPlayer's Score: " << player_sum
-            << " Beats Dealer's Score: " << dealer->score
-            << "\nYou Win\n";
-    }
-}
-
-void Blackjack::DealerShows() {
-    cout << "\nDealer's Hand Contains:\n";
+    cout << "\nDealer's hand contains:\n";
 
     for (shared_ptr<card> it : dealer->hand)
     {
         cout << it->title << '\n';
     }
+
+    if (player->exodia && dealer->exodia)
+    {
+        cout << "\nYou and the Dealer both got Blackjack"
+            << "\nIt's a Push\n";
+    }
+
+    else if (player->exodia && !dealer->exodia)
+    {
+        cout << "\nYour Blackjack Beats Dealer's Hand"
+            << "\nYou Win\n";
+    }
+
+    else if (!player->exodia && dealer->exodia)
+    {
+        cout << "\nDealer's Blackjack Beats Your Hand"
+            << "\nThe House Wins\n";
+    }
+
+    else if (player->score > 21)
+    {
+        cout << "\nYou Lose\n";
+    }
+
+    else if (dealer->score > 21)
+    {
+        cout << "\nDealer's Total: " << dealer->score
+            << "\nDealer Busts"
+            << "\nYou Win\n";
+    }
+
+    else if (dealer->score > player->score)
+    {
+        cout << "\nDealer's Score: " << dealer->score
+            << " Beats Player's Score: " << player->score
+            << "\nThe House Wins\n";
+    }
+
+    else if (dealer->score == player->score)
+    {
+        cout << "\nDealer's Score: " << dealer->score
+            << " Ties Player's Score: " << player->score
+            << "\nIt's a Push\n";
+    }
+
+    else
+    {
+        cout << "\nPlayer's Score: " << player->score
+            << " Beats Dealer's Score: " << dealer->score
+            << "\nYou Win\n";
+    }
+}
+
+void Blackjack::DealersChoice(int player_total) {
+    CalculateHand(dealer);
+
+    if (dealer->exodia)
+    {
+        return;
+    }
+
+    for (shared_ptr<user> player : table)
+    {
+        if (player->exodia)
+        {
+            return;
+        }
+    }
+
+    while (dealer->score < player_total)
+    {
+        if (dealer->score >= 17 && !dealer->soft17)
+        {
+            return;
+        }
+
+        dealer->hand.push_back(deck.front());
+        deck.pop();
+        CalculateHand(dealer);
+    }
+}
+
+void Blackjack::DealerShows() {
+    
 }
 
 void Blackjack::CountingCards(shared_ptr<user> player) {
@@ -408,12 +428,13 @@ void Blackjack::CountingCards(shared_ptr<user> player) {
 
     while (!clone_deck.empty())
     {
-        vector<shared_ptr<card>> next_hand(player->hand);
-        next_hand.push_back(clone_deck.front());
+        shared_ptr<user> sim_player = InitUser(player->hand);
+        sim_player->hand.push_back(clone_deck.front());
+
         unknown_cards.push_back(clone_deck.front());
         clone_deck.pop();
 
-        int index = HashCard(next_hand);
+        int index = HashCard(sim_player);
         card_counter[index]++;
     }
 
@@ -428,10 +449,10 @@ void Blackjack::CountingCards(shared_ptr<user> player) {
 
             if (i < MAX)
             {
-                int test_sum = i + OFFSET;
-                float win_rate = RunSimulations(unknown_cards, test_sum);
+                int test_score = i + OFFSET;
+                float win_rate = RunSimulations(unknown_cards, test_score);
 
-                cout << test_sum << ": "
+                cout << test_score << ": "
                     << chance << "% Draw Chance\t"
                     << win_rate << "% Win Rate\n";
             }
@@ -447,10 +468,8 @@ void Blackjack::CountingCards(shared_ptr<user> player) {
     RunSimulations(unknown_cards, player);
 }
 
-int Blackjack::HashCard(vector<shared_ptr<card>> next_hand) {
-    shared_ptr<user> sim_player = InitUser(next_hand);
+int Blackjack::HashCard(shared_ptr<user> sim_player) {
     CalculateHand(sim_player);
-
     int hash = sim_player->score - OFFSET;
 
     if (hash > MAX)
@@ -484,14 +503,14 @@ void Blackjack::RunSimulations(vector<shared_ptr<card>> unknown_cards, shared_pt
         << stay_odds << "%\n";
 }
 
-float Blackjack::RunSimulations(vector<shared_ptr<card>> unknown_cards, int test_sum) {
+float Blackjack::RunSimulations(vector<shared_ptr<card>> unknown_cards, int test_score) {
     float wins = 0;
 
     for (size_t i = 0; i < SIMS; i++)
     {
         auto rng = default_random_engine(i);
         shuffle(begin(unknown_cards), end(unknown_cards), rng);
-        wins += SimulateGames(unknown_cards, test_sum);
+        wins += SimulateGames(unknown_cards, test_score);
     }
 
     return wins / SIMS * 100;
@@ -516,7 +535,7 @@ float Blackjack::SimulateGames(vector<shared_ptr<card>> unknown_cards, shared_pt
     }
 }
 
-float Blackjack::SimulateGames(vector<shared_ptr<card>> unknown_cards, int player_sum) {
+float Blackjack::SimulateGames(vector<shared_ptr<card>> unknown_cards, int player_total) {
     shared_ptr<casino> sim_dealer = InitCasino();
 
     sim_dealer->hand.push_back(dealer->hand[0]);
@@ -525,14 +544,14 @@ float Blackjack::SimulateGames(vector<shared_ptr<card>> unknown_cards, int playe
 
     CalculateHand(sim_dealer);
 
-    while (sim_dealer->score < player_sum && (sim_dealer->score < 17 || sim_dealer->soft17))
+    while (sim_dealer->score < player_total && (sim_dealer->score < 17 || sim_dealer->soft17))
     {
         sim_dealer->hand.push_back(unknown_cards.back());
         unknown_cards.pop_back();
         CalculateHand(sim_dealer);
     }
 
-    if (sim_dealer->score > 21  || sim_dealer->score < player_sum)
+    if (sim_dealer->score > 21  || sim_dealer->score < player_total)
     {
         return 1;
     }

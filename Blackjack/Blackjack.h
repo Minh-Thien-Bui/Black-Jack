@@ -67,17 +67,18 @@ private:
 	void StayOrBust(shared_ptr<user>& player);
 	void Hit(shared_ptr<user>& player);
 
-	void DealersChoice(int player_sum);
+	void DealersChoice(int player_total);
 	void DealerShows();
+	void EndGame(shared_ptr<user> player);
 
 	void CountingCards(shared_ptr<user> player);
-	int HashCard(vector<shared_ptr<card>> next_hand);
+	int HashCard(shared_ptr<user> sim_player);
 
 	void RunSimulations(vector<shared_ptr<card>> unknown_cards, shared_ptr<user> player);
-	float RunSimulations(vector<shared_ptr<card>> unknown_cards, int test_sum);
+	float RunSimulations(vector<shared_ptr<card>> unknown_cards, int test_score);
 
 	float SimulateGames(vector<shared_ptr<card>> unknown_cards, shared_ptr<user> player);
-	float SimulateGames(vector<shared_ptr<card>> unknown_cards, int player_sum);
+	float SimulateGames(vector<shared_ptr<card>> unknown_cards, int player_total);
 
 	vector<shared_ptr<card>> card_list;
 	queue<shared_ptr<card>> deck;
