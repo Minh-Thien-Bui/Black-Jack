@@ -150,6 +150,15 @@ void Blackjack::ShowTable() {
     }
 }
 
+void Blackjack::ShowHand(shared_ptr<user> player) {
+    cout << "\nYour hand holds:\n";
+
+    for (shared_ptr<card> it : player->hand)
+    {
+        cout << it->title << '\n';
+    }
+}
+
 void Blackjack::CheckDoubles(shared_ptr<user> player) {
     ShowTable();
 
@@ -160,13 +169,7 @@ void Blackjack::CheckDoubles(shared_ptr<user> player) {
 }
 
 void Blackjack::SplitPair(shared_ptr<user> player) {
-    cout << "\nYour hand contains:\n";
-
-    for (shared_ptr<card> it : player->hand)
-    {
-        cout << it->title << '\n';
-    }
-
+    ShowHand(player);
     int split;
 
     cout << "\nYou have a pair of "
@@ -197,7 +200,7 @@ void Blackjack::SplitPair(shared_ptr<user> player) {
     }
 }
 
-void Blackjack::CalculateHand(shared_ptr<user>& yugi) {
+void Blackjack::CalculateHand(shared_ptr<user> yugi) {
     int hand_sum = 0;
     bool aces = false;
 
@@ -232,7 +235,7 @@ void Blackjack::CalculateHand(shared_ptr<user>& yugi) {
     yugi->score = hand_sum;
 }
 
-void Blackjack::CalculateHand(shared_ptr<casino>& kaiba) {
+void Blackjack::CalculateHand(shared_ptr<casino> kaiba) {
     int hand_sum = 0;
     bool aces = false;
 
@@ -277,22 +280,17 @@ void Blackjack::CalculateHand(shared_ptr<casino>& kaiba) {
     kaiba->score = hand_sum;
 }
 
-void Blackjack::StayOrBust(shared_ptr<user>& player) {
+void Blackjack::StayOrBust(shared_ptr<user> player) {
     cout << "\nDealer's hand contains:\n"
-        << dealer->hand[0]->title
-        << "\n\nYour cards are:\n";
+        << dealer->hand[0]->title << '\n';
 
-    for (shared_ptr<card> it : player->hand)
-    {
-        cout << it->title << '\n';
-    }
-
+    ShowHand(player);
     CalculateHand(player);
     cout << "Total Score: " << player->score;
 
     if (player->score > 21)
     {
-        cout << "\n\nYour Hand Busted\n";
+        cout << "\n\nYou went over 21\n";
         return;
     }
 
@@ -325,7 +323,7 @@ void Blackjack::StayOrBust(shared_ptr<user>& player) {
     }
 }
 
-void Blackjack::Hit(shared_ptr<user>& player) {
+void Blackjack::Hit(shared_ptr<user> player) {
     player->hand.push_back(deck.front());
     deck.pop();
     StayOrBust(player);
@@ -333,12 +331,7 @@ void Blackjack::Hit(shared_ptr<user>& player) {
 
 void Blackjack::EndGame(shared_ptr<user> player) {
     ShowTable();
-    cout << "\nYour hand holds:\n";
-
-    for (shared_ptr<card> it : player->hand)
-    {
-        cout << it->title << '\n';
-    }
+    ShowHand(player);
 
     cout << "\nDealer's hand contains:\n";
 
@@ -349,32 +342,33 @@ void Blackjack::EndGame(shared_ptr<user> player) {
 
     if (player->exodia && dealer->exodia)
     {
-        cout << "\nYou and the Dealer both got Blackjack"
-            << "\nIt's a Push\n";
+        cout << "\nYou and the Dealer both got Blackjack\n"
+            << "It's a Push\n";
     }
 
     else if (player->exodia && !dealer->exodia)
     {
-        cout << "\nYour Blackjack beats Dealer's Hand"
-            << "\nYou Win\n";
+        cout << "\nYour Blackjack beats Dealer's Hand\n"
+            << "You Win\n";
     }
 
     else if (!player->exodia && dealer->exodia)
     {
-        cout << "\nDealer's Blackjack beats Your Hand"
-            << "\nThe House Wins\n";
+        cout << "\nDealer's Blackjack beats Your Hand\n"
+            << "The House Wins\n";
     }
 
     else if (player->score > 21)
     {
-        cout << "\nYou Lose\n";
+        cout << "\nYour Hand Busted\n"
+            << "You Lose\n";
     }
 
     else if (dealer->score > 21)
     {
         cout << "\nDealer's Total: " << dealer->score
-            << "\nDealer Busts"
-            << "\nYou Win\n";
+            << "\nDealer Busts\n"
+            << "You Win\n";
     }
 
     else if (dealer->score > player->score)

@@ -57,18 +57,21 @@ private:
 	shared_ptr<user> InitUser();
 	shared_ptr<user> InitUser(vector<shared_ptr<card>> hand);
 	shared_ptr<casino> InitCasino();
+
 	void InitDeck();
 	void InitGame();
 	
 	void ShowTable();
+	void ShowHand(shared_ptr<user> player);
+
 	void CheckDoubles(shared_ptr<user> player);
 	void SplitPair(shared_ptr<user> player);
 
-	void CalculateHand(shared_ptr<user>& yugi);
-	void CalculateHand(shared_ptr<casino>& kaiba);
+	void CalculateHand(shared_ptr<user> yugi);
+	void CalculateHand(shared_ptr<casino> kaiba);
 
-	void StayOrBust(shared_ptr<user>& player);
-	void Hit(shared_ptr<user>& player);
+	void StayOrBust(shared_ptr<user> player);
+	void Hit(shared_ptr<user> player);
 
 	void DealersChoice(int player_total);
 	void EndGame(shared_ptr<user> player);
