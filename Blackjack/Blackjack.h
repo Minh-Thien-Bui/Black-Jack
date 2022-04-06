@@ -46,9 +46,10 @@ public:
 	~Blackjack();
 	
 	// Press Start
-	void InitGame();
+	void GameStart();
 
 	// Test Functions
+	void ExodiaTest();
 	void TestPairs();
 	
 private:
@@ -57,9 +58,11 @@ private:
 	shared_ptr<user> InitUser(vector<shared_ptr<card>> hand);
 	shared_ptr<casino> InitCasino();
 	void InitDeck();
+	void InitGame();
 	
-	void Check_Doubles();
-	void SplitPair(shared_ptr<user>& player);
+	void ShowTable();
+	void CheckDoubles(shared_ptr<user> player);
+	void SplitPair(shared_ptr<user> player);
 
 	void CalculateHand(shared_ptr<user>& yugi);
 	void CalculateHand(shared_ptr<casino>& kaiba);
@@ -68,7 +71,6 @@ private:
 	void Hit(shared_ptr<user>& player);
 
 	void DealersChoice(int player_total);
-	void DealerShows();
 	void EndGame(shared_ptr<user> player);
 
 	void CountingCards(shared_ptr<user> player);

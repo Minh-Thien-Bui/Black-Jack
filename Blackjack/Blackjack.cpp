@@ -83,6 +83,18 @@ shared_ptr<casino> Blackjack::InitCasino() {
     return ret;
 }
 
+void Blackjack::GameStart() {
+    int play_again = 1;
+
+    while (play_again)
+    {
+        InitGame();
+
+        cout << "\nEnter 1 if you'd like to play again or 0 to quit: ";
+        cin >> play_again;
+    }
+}
+
 void Blackjack::InitGame() {
     if (deck.size() < MIN)
     {
@@ -103,7 +115,7 @@ void Blackjack::InitGame() {
     }
 
     table.push_back(player);
-    Check_Doubles();
+    CheckDoubles(player);
     int high_score = 0;
 
     for (shared_ptr<user> it : table)
@@ -124,19 +136,30 @@ void Blackjack::InitGame() {
     }
 }
 
-void Blackjack::Check_Doubles() {
-    vector<shared_ptr<user>> temp(table);
+void Blackjack::ShowTable() {
+    cout << "\nFull Table:";
 
-    for (shared_ptr<user> it : temp)
+    for (shared_ptr<user> it_player : table)
     {
-        if (it->hand[0]->rank == it->hand[1]->rank)
+        cout << '\n';
+
+        for (shared_ptr<card> it_card : it_player->hand)
         {
-            SplitPair(it);
+            cout << it_card->title << '\n';
         }
     }
 }
 
-void Blackjack::SplitPair(shared_ptr<user>& player) {
+void Blackjack::CheckDoubles(shared_ptr<user> player) {
+    ShowTable();
+
+    if (player->hand[0]->rank == player->hand[1]->rank)
+    {
+        SplitPair(player);
+    }
+}
+
+void Blackjack::SplitPair(shared_ptr<user> player) {
     cout << "\nYour hand contains:\n";
 
     for (shared_ptr<card> it : player->hand)
@@ -169,19 +192,8 @@ void Blackjack::SplitPair(shared_ptr<user>& player) {
 
         table.push_back(temp_user);
 
-        cout << "\nFull Table:\n";
-
-        for (shared_ptr<user> it_player : table)
-        {
-            cout << '\n';
-
-            for (shared_ptr<card> it_card : it_player->hand)
-            {
-                cout << it_card->title << '\n';
-            }
-        }
-
-        Check_Doubles();
+        CheckDoubles(player);
+        CheckDoubles(temp_user);
     }
 }
 
@@ -266,7 +278,7 @@ void Blackjack::CalculateHand(shared_ptr<casino>& kaiba) {
 }
 
 void Blackjack::StayOrBust(shared_ptr<user>& player) {
-    cout << "\nDealer's Hand Contains:\n"
+    cout << "\nDealer's hand contains:\n"
         << dealer->hand[0]->title
         << "\n\nYour cards are:\n";
 
@@ -320,6 +332,7 @@ void Blackjack::Hit(shared_ptr<user>& player) {
 }
 
 void Blackjack::EndGame(shared_ptr<user> player) {
+    ShowTable();
     cout << "\nYour hand holds:\n";
 
     for (shared_ptr<card> it : player->hand)
@@ -342,13 +355,13 @@ void Blackjack::EndGame(shared_ptr<user> player) {
 
     else if (player->exodia && !dealer->exodia)
     {
-        cout << "\nYour Blackjack Beats Dealer's Hand"
+        cout << "\nYour Blackjack beats Dealer's Hand"
             << "\nYou Win\n";
     }
 
     else if (!player->exodia && dealer->exodia)
     {
-        cout << "\nDealer's Blackjack Beats Your Hand"
+        cout << "\nDealer's Blackjack beats Your Hand"
             << "\nThe House Wins\n";
     }
 
@@ -367,21 +380,21 @@ void Blackjack::EndGame(shared_ptr<user> player) {
     else if (dealer->score > player->score)
     {
         cout << "\nDealer's Score: " << dealer->score
-            << " Beats Player's Score: " << player->score
+            << " beats Player's Score: " << player->score
             << "\nThe House Wins\n";
     }
 
     else if (dealer->score == player->score)
     {
         cout << "\nDealer's Score: " << dealer->score
-            << " Ties Player's Score: " << player->score
+            << " ties Player's Score: " << player->score
             << "\nIt's a Push\n";
     }
 
     else
     {
         cout << "\nPlayer's Score: " << player->score
-            << " Beats Dealer's Score: " << dealer->score
+            << " beats Dealer's Score: " << dealer->score
             << "\nYou Win\n";
     }
 }
@@ -413,10 +426,6 @@ void Blackjack::DealersChoice(int player_total) {
         deck.pop();
         CalculateHand(dealer);
     }
-}
-
-void Blackjack::DealerShows() {
-    
 }
 
 void Blackjack::CountingCards(shared_ptr<user> player) {
@@ -562,6 +571,47 @@ float Blackjack::SimulateGames(vector<shared_ptr<card>> unknown_cards, int playe
     }
 }
 
+void Blackjack::ExodiaTest() {
+    table.clear();
+    dealer = InitCasino();
+    vector<shared_ptr<card>> perfectHand;
+
+    perfectHand.push_back(
+        InitCard("Ace", "Exodia", 1)
+    );
+    perfectHand.push_back(
+        InitCard("King", "Obliterate", 10)
+    );
+
+    shared_ptr<user> test_player = InitUser(perfectHand);
+    CalculateHand(test_player);
+    table.push_back(test_player);
+
+    dealer->hand.push_back(
+        InitCard("Ace", "Blue Eyes", 1)
+    );
+    dealer->hand.push_back(
+        InitCard("Six", "White Dragon", 6)
+    );
+
+    DealersChoice(test_player->score);
+    EndGame(test_player);
+
+    test_player->hand = dealer->hand;
+    test_player->hand.push_back(
+        InitCard("Four", "Kuriboh", 4)
+    );
+
+    dealer->hand = perfectHand;
+    CalculateHand(test_player);
+    DealersChoice(test_player->score);
+    EndGame(test_player);
+
+    test_player->hand = perfectHand;
+    CalculateHand(test_player);
+    EndGame(test_player);
+}
+
 void Blackjack::TestPairs() {
     shared_ptr<user> temp_user = InitUser();
     table.clear();
@@ -596,5 +646,6 @@ void Blackjack::TestPairs() {
     }
 
     table.push_back(temp_user);
-    Check_Doubles();
+    CheckDoubles(temp_user);
+    ShowTable();
 }

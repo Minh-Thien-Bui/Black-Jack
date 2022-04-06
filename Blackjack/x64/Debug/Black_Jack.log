@@ -1,9 +1,7 @@
 ﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(510,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (Black_Jack.vcxproj).  This can lead to incorrect clean and rebuild behavior.
   Blackjack.cpp
 C:\Users\sephi\Documents\College\Data Structures\Blackjack\Blackjack.cpp(47,42): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-C:\Users\sephi\Documents\College\Data Structures\Blackjack\Blackjack.cpp(452,44): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\sephi\Documents\College\Data Structures\Blackjack\Blackjack.cpp(490,43): warning C4267: 'argument': conversion from 'size_t' to 'unsigned int', possible loss of data
-C:\Users\sephi\Documents\College\Data Structures\Blackjack\Blackjack.cpp(511,43): warning C4267: 'argument': conversion from 'size_t' to 'unsigned int', possible loss of data
-  Play_Game.cpp
-  Generating Code...
+C:\Users\sephi\Documents\College\Data Structures\Blackjack\Blackjack.cpp(461,44): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\sephi\Documents\College\Data Structures\Blackjack\Blackjack.cpp(499,43): warning C4267: 'argument': conversion from 'size_t' to 'unsigned int', possible loss of data
+C:\Users\sephi\Documents\College\Data Structures\Blackjack\Blackjack.cpp(520,43): warning C4267: 'argument': conversion from 'size_t' to 'unsigned int', possible loss of data
   Black_Jack.vcxproj -> C:\Users\sephi\Documents\College\Data Structures\Blackjack\x64\Debug\Blackjack.exe
