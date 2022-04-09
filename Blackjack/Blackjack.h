@@ -15,7 +15,7 @@ using namespace std;
 #define MIN 21
 #define MAX 16
 #define OFFSET 6
-#define SIMS 1000
+#define SIMS 100
 
 struct card {
 	string rank;
@@ -81,8 +81,8 @@ private:
 	void CountingCards(shared_ptr<user> player);
 	int HashCard(shared_ptr<user> sim_player);
 
+	float RunSimulations(vector<shared_ptr<card>> unknown_cards, shared_ptr<card> card_drawn, int test_score);
 	void RunSimulations(vector<shared_ptr<card>> unknown_cards, shared_ptr<user> player);
-	float RunSimulations(vector<shared_ptr<card>> unknown_cards, int test_score);
 
 	float SimulateGames(vector<shared_ptr<card>> unknown_cards, shared_ptr<user> player);
 	float SimulateGames(vector<shared_ptr<card>> unknown_cards, int player_total);
