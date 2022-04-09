@@ -47,10 +47,11 @@ public:
 	
 	// Press Start
 	void GameStart();
-
+	
 	// Test Functions
 	void AceTest();
 	void ExodiaTest();
+	void SimulatorTest();
 	void TestPairs();
 	
 private:

@@ -642,6 +642,59 @@ void Blackjack::ExodiaTest() {
     EndGame(test_player);
 }
 
+void Blackjack::SimulatorTest() {
+    table.clear();
+    dealer = InitCasino();
+
+    while (!deck.empty())
+    {
+        deck.pop();
+    }
+
+    vector<shared_ptr<card>> testCards;
+
+    testCards.push_back(InitCard("Two", "test", 2));
+    testCards.push_back(InitCard("Two", "test", 2));
+    testCards.push_back(InitCard("Ten", "test", 10));
+    testCards.push_back(InitCard("Ten", "test", 10));
+
+    for (shared_ptr<card> it : testCards)
+    {
+        deck.push(it);
+    }
+
+    shared_ptr<user> simPlayer = InitUser();
+
+    simPlayer->hand.push_back(
+        InitCard("Ace", "test", 1)
+    );
+    simPlayer->hand.push_back(
+        InitCard("Six", "test", 6)
+    );
+
+    ShowHand(simPlayer);
+
+    dealer->hand.push_back(
+        InitCard("Two", "test", 2)
+    );
+    dealer->hand.push_back(
+        InitCard("Ace", "test", 1)
+    );
+
+    cout << "\nDealer's hand contains:\n"
+        << dealer->hand[0]->title;
+
+    cout << "\n\nFacedown Cards:\n"
+        << dealer->hand[1]->title;
+
+    for (shared_ptr<card> it : testCards)
+    {
+        cout << '\n' << it->title;
+    }
+
+    CountingCards(simPlayer);
+}
+
 void Blackjack::TestPairs() {
     shared_ptr<user> temp_user = InitUser();
     table.clear();

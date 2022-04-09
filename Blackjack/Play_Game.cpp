@@ -11,6 +11,7 @@ int main()
 
 	//cardgame.AceTest();
 	//cardgame.ExodiaTest();
+	//cardgame.SimulatorTest();
 	//cardgame.TestPairs();
 
 	cardgame.GameStart();
