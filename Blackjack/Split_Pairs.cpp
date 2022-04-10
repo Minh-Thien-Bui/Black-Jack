@@ -32,9 +32,9 @@ void Blackjack::SplitPair(shared_ptr<user> player) {
         player->hand.push_back(deck.front());
         deck.pop();
 
-        table.push_back(temp_user);
-
+        table.insert(table.begin() + 1, temp_user);
         ShowTable();
+
         CheckDoubles(player);
         CheckDoubles(temp_user);
     }
