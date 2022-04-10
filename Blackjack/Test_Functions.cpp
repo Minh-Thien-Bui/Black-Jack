@@ -91,8 +91,8 @@ void Blackjack::SimulatorTest() {
 
     testCards.push_back(InitCard("Two", "test", 2));
     testCards.push_back(InitCard("Two", "test", 2));
-    testCards.push_back(InitCard("Ten", "test", 10));
-    testCards.push_back(InitCard("Ten", "test", 10));
+    testCards.push_back(InitCard("Jack", "test", 10));
+    testCards.push_back(InitCard("Jack", "test", 10));
 
     for (shared_ptr<card> it : testCards)
     {
@@ -129,6 +129,85 @@ void Blackjack::SimulatorTest() {
     }
 
     CountingCards(simPlayer);
+}
+
+void Blackjack::TestDeckSize() {
+    table.clear();
+    dealer = InitCasino();
+
+    while (!deck.empty())
+    {
+        deck.pop();
+    }
+
+    shared_ptr<card> testDeck[5] = {
+        InitCard("Ace", "test", 1),
+        InitCard("Three", "test", 3),
+        InitCard("Four", "test", 4),
+        InitCard("Five", "test", 5),
+        InitCard("Six", "test", 6)
+    };
+
+    for (shared_ptr<card> it : testDeck) 
+    {
+        for (size_t i = 0; i < 4; i++)
+        {
+            deck.push(it);
+        }
+    }
+
+    deck.push(InitCard("Two", "Two Face", 2));
+
+    shared_ptr<card> testCasino[3] = {
+        InitCard("Joker", "Arkham", 20),
+        InitCard("Two", "Gotham", 2),
+        InitCard("Seven", "Batman", 7)
+    };
+
+    for (shared_ptr<card> it : testCasino)
+    {
+        for (size_t i = 0; i < 3; i++)
+        {
+            deck.push(it);
+        }
+    }
+
+    int testSize = deck.size();
+
+    for (size_t i = 0; i < 4; i++)
+    {
+        table.push_back(InitUser());
+    }
+
+    for (size_t i = 0; i < 6; i++)
+    {
+        for (shared_ptr<user> player : table)
+        {
+            player->hand.push_back(deck.front());
+            deck.pop();
+        }
+    }
+
+    ShowTable();
+    int high_score = 0;
+
+    for (shared_ptr<user> player : table)
+    {
+        CalculateHand(player);
+
+        if (player->score > high_score && player->score < 22)
+        {
+            high_score = player->score;
+        }
+    }
+
+    DealersChoice(high_score);
+    ShowCasino();
+
+    cout << "\nInitial Deck Size: "
+        << testSize
+        << "\nCards Remaining: "
+        << deck.size() << '\n';
 }
 
 void Blackjack::TestPairs() {

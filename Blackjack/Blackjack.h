@@ -12,7 +12,7 @@
 
 using namespace std;
 
-#define MIN 18
+#define MIN 30
 #define MAX 16
 #define OFFSET 6
 #define SIMS 100
@@ -52,6 +52,7 @@ public:
 	void AceTest();
 	void ExodiaTest();
 	void SimulatorTest();
+	void TestDeckSize();
 	void TestPairs();
 	
 private:
@@ -64,6 +65,7 @@ private:
 	void InitGame();
 	
 	void ShowTable();
+	void ShowCasino();
 	void ShowHand(shared_ptr<user> player);
 
 	void CheckDoubles(shared_ptr<user> player);

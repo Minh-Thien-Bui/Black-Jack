@@ -14,6 +14,15 @@ void Blackjack::ShowTable() {
     }
 }
 
+void Blackjack::ShowCasino() {
+    cout << "\nDealer's hand contains:\n";
+
+    for (shared_ptr<card> it : dealer->hand)
+    {
+        cout << it->title << '\n';
+    }
+}
+
 void Blackjack::ShowHand(shared_ptr<user> player) {
     cout << "\nYour hand holds:\n";
 
@@ -25,13 +34,7 @@ void Blackjack::ShowHand(shared_ptr<user> player) {
 
 void Blackjack::EndGame(shared_ptr<user> player) {
     ShowHand(player);
-
-    cout << "\nDealer's hand contains:\n";
-
-    for (shared_ptr<card> it : dealer->hand)
-    {
-        cout << it->title << '\n';
-    }
+    ShowCasino();
 
     if (player->exodia && dealer->exodia)
     {
