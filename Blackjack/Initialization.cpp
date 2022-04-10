@@ -21,7 +21,10 @@ Blackjack::Blackjack() {
     {
         for (string suit : suits_list)
         {
-            shared_ptr<card> temp = InitCard(rank_value.first, suit, rank_value.second);
+            shared_ptr<card> temp = InitCard(
+                rank_value.first, suit, rank_value.second
+            );
+
             card_list.push_back(temp);
         }
     }

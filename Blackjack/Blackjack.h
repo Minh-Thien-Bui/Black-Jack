@@ -12,7 +12,7 @@
 
 using namespace std;
 
-#define MIN 21
+#define MIN 18
 #define MAX 16
 #define OFFSET 6
 #define SIMS 100
