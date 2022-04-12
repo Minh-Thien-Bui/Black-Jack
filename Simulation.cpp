@@ -81,7 +81,7 @@ float Blackjack::RunSimulations(vector<shared_ptr<card>> unknown_cards, shared_p
 
     for (size_t i = 0; i < SIMS; i++)
     {
-        int seed = time(NULL) % (i + 1);
+        int seed = time(NULL) / (i + 1);
         auto rng = default_random_engine(seed);
 
         shuffle(begin(unknown_cards), end(unknown_cards), rng);
@@ -98,7 +98,7 @@ void Blackjack::RunSimulations(vector<shared_ptr<card>> unknown_cards, shared_pt
 
     for (size_t i = 0; i < SIMS * 10; i++)
     {
-        int seed = time(NULL) % (i + 1);
+        int seed = time(NULL) / (i + 1);
         auto rng = default_random_engine(seed);
         shuffle(begin(unknown_cards), end(unknown_cards), rng);
 
